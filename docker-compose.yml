@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # веб-консоль (UI)
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      minio_net:
+        ipv4_address: 172.25.0.10
+
+  s3-server:
+    build: .
+    ports:
+      - "8080:8080"  # сервер Go 
+    depends_on:
+      - minio
+    networks:
+      - minio_net
+
+networks:
+  minio_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+
+volumes:
+  minio_data:
