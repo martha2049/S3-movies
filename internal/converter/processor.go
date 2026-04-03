@@ -1,10 +1,10 @@
-package image
+package converter
 
 import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"go.uber.org/zap" // Импортируем логгер
+	"go.uber.org/zap" 
 )
 
 // конвертация из srcDir в jpeg и сохранение в dstDir

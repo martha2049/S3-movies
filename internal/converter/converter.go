@@ -1,4 +1,4 @@
-package image
+package converter
 
 import (
 	"bytes"
@@ -15,6 +15,7 @@ import (
 
 const MaxWidth = 800
 const JPEGQuality = 80
+const ProcessedDir = "processed"
 
 // путь к исходной картинке, конвертация в JPEG, ресайз и сохранение в outputDir
 func ConvertAndCompress(inputPath, outputDir string, logger *zap.Logger) (string, error) {
@@ -30,11 +31,17 @@ func ConvertAndCompress(inputPath, outputDir string, logger *zap.Logger) (string
 		return "", err
 	}
 
-	// Логируем формат изображения
+	// лог формата изображения
 	logger.Info("Image format", zap.String("format", format))
 
 	// ресайз
 	resized := resize.Resize(MaxWidth, 0, img, resize.Lanczos3)
+
+	// создаём папку processed/, если нет
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		logger.Error("Failed to create processed directory", zap.Error(err))
+		return "", err
+	}
 
 	// подготовка выходного файла
 	outputName := filepath.Base(inputPath)
@@ -77,7 +84,7 @@ func decodeImage(r io.Reader, inputPath string, logger *zap.Logger) (image.Image
 	// лог неподдерживаемого формата
 	logger.Error("Failed to decode using standard formats", zap.String("file", inputPath), zap.Error(err))
 
-	// Проверка для WebP
+	// проверка для WebP
 	img, err = webp.Decode(bytes.NewReader(buf.Bytes()))
 	if err != nil {
 		// лог ошибки для webp

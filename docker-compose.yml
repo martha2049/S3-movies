@@ -14,8 +14,7 @@ services:
     volumes:
       - minio_data:/data
     networks:
-      minio_net:
-        ipv4_address: 172.25.0.10
+      - minio_net
 
   s3-server:
     build: .
@@ -25,13 +24,15 @@ services:
       - minio
     networks:
       - minio_net
+    env_file:
+      - .env   
 
 networks:
   minio_net:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.25.0.0/16
+        - subnet: 172.30.0.0/16   # подсеть (исправить локальную проблему с переполенным пулом)
 
 volumes:
   minio_data:
