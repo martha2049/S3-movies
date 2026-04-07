@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"image"
 	"image/jpeg"
+	_ "image/jpeg" 
+    _ "image/png" 
 	"io"
 	"os"
 	"path/filepath"

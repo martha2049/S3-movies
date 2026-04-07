@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>S3 Movies UI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>S3 Movies Interface</h1>
+
+    <section id="uploadSection">
+        <h2>Upload File</h2>
+        <input type="file" id="fileInput">
+        <button onclick="uploadFile()">Upload</button>
+        <p id="uploadMessage"></p>
+    </section>
+
+    <section id="listSection">
+        <h2>Files in S3</h2>
+        <button onclick="listFiles()">Refresh List</button>
+        <pre id="fileList"></pre>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>

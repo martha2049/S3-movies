@@ -1,14 +1,15 @@
 package main
 
 import (
-    stdlog "log"                
-    "s3-movies/internal/log"     
-    "s3-movies/internal/handlers"
-    "s3-movies/internal/s3"
-    "s3-movies/internal/usecase"
+	stdlog "log"
+	"s3-movies/internal/handlers"
+	"s3-movies/internal/log"
+	"s3-movies/internal/s3"
+	"s3-movies/internal/usecase"
 
-    "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2"
 )
+
 const MaxUploadSize = 50 * 1024 * 1024
 
 func main() {
@@ -23,10 +24,13 @@ func main() {
 	// usecase
 	uc := usecase.NewImageUsecase(client, logger)
 
-    // создаём Fiber с лимитом на body
-    app := fiber.New(fiber.Config{
-        BodyLimit: MaxUploadSize,
-    })
+	// создаём Fiber с лимитом на body
+	app := fiber.New(fiber.Config{
+		BodyLimit: MaxUploadSize,
+	})
+
+	//раздаём статические файлы UI
+	app.Static("/", "./internal/ui")
 
 	// роуты
 	app.Get("/", handlers.RootHandler)

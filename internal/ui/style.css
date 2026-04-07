@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f7f7f7;
+}
+
+h1 {
+    color: #333;
+}
+
+section {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+button {
+    padding: 8px 12px;
+    margin-top: 5px;
+    cursor: pointer;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 3px;
+}
+
+button:hover {
+    background-color: #1565c0;
+}
+
+pre {
+    background: #eee;
+    padding: 10px;
+    border-radius: 3px;
+    max-height: 300px;
+    overflow-y: auto;
+}

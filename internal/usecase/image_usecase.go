@@ -46,9 +46,25 @@ func (u *ImageUsecase) Upload(filePath string) (string, error) {
 		return "", err
 	}
 
+	// проверяем существование бакета, если нет — создаем
+	ctx := context.Background()
+	exists, err := u.client.BucketExists(ctx, u.bucket)
+	if err != nil {
+		u.logger.Error("Failed to check bucket existence", zap.Error(err))
+		return "", err
+	}
+	if !exists {
+		err = u.client.MakeBucket(ctx, u.bucket, minio.MakeBucketOptions{})
+		if err != nil {
+			u.logger.Error("Failed to create bucket", zap.Error(err))
+			return "", err
+		}
+		u.logger.Info("Bucket created successfully", zap.String("bucket", u.bucket))
+	}
+
 	// загрузка файла в S3
 	_, err = u.client.FPutObject(
-		context.Background(),
+		ctx,
 		u.bucket,
 		filepath.Base(processedPath),
 		processedPath,
