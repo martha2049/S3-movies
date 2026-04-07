@@ -11,14 +11,14 @@ import (
 )
 
 // скачивание файлов из бакета в localDir
-func SyncFromS3(client *minio.Client, bucket, localDir string, logger *zap.Logger) error {
+func SyncFromS3(ctx context.Context, client *minio.Client, bucket, localDir string, logger *zap.Logger) error {
 	// создание папки downloads, если нет
 	if err := os.MkdirAll(localDir, 0755); err != nil {
 		return fmt.Errorf("failed to create local directory: %w", err)
 	}
 
 	// получение списка всех объектов в бакете
-	objectCh := client.ListObjects(context.Background(), bucket, minio.ListObjectsOptions{Recursive: true})
+	objectCh := client.ListObjects(ctx, bucket, minio.ListObjectsOptions{Recursive: true})
 
 	for obj := range objectCh {
 		if obj.Err != nil {
@@ -35,13 +35,13 @@ func SyncFromS3(client *minio.Client, bucket, localDir string, logger *zap.Logge
 		}
 
 		// скачивание объекта в локальный файл
-		err := client.FGetObject(context.Background(), bucket, obj.Key, localPath, minio.GetObjectOptions{})
+		err := client.FGetObject(ctx, bucket, obj.Key, localPath, minio.GetObjectOptions{})
 		if err != nil {
 			logger.Error("Failed to download object", zap.String("object", obj.Key), zap.Error(err))
 			continue
 		}
 
-		logger.Info("Downloaded object", zap.String("object", obj.Key), zap.String("to", localPath))
+		logger.Debug("Downloaded object", zap.String("object", obj.Key), zap.String("to", localPath))
 	}
 
 	return nil

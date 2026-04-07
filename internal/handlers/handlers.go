@@ -95,7 +95,6 @@ func ListHandler(uc *usecase.ImageUsecase) fiber.Handler {
 			return c.SendString("No files in bucket")
 		}
 
-		// Преобразуем результат в строку с разделением
 		return c.SendString("Files in bucket:\n" + strings.Join(result, "\n"))
 	}
 }

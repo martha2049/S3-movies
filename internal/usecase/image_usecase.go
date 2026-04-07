@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"s3-movies/internal/converter"
+
 	"github.com/minio/minio-go/v7"
 	"go.uber.org/zap"
 )
@@ -59,7 +60,7 @@ func (u *ImageUsecase) Upload(filePath string) (string, error) {
 			u.logger.Error("Failed to create bucket", zap.Error(err))
 			return "", err
 		}
-		u.logger.Info("Bucket created successfully", zap.String("bucket", u.bucket))
+		u.logger.Debug("Bucket created successfully", zap.String("bucket", u.bucket))
 	}
 
 	// загрузка файла в S3
@@ -73,6 +74,8 @@ func (u *ImageUsecase) Upload(filePath string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	u.logger.Debug("Uploaded file to S3", zap.String("file", filepath.Base(processedPath)))
 
 	return processedPath, nil
 }
