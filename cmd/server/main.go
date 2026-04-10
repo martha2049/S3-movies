@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	stdlog "log"
-	"time"
 
+	"s3-movies/internal/config"
 	"s3-movies/internal/handlers"
 	"s3-movies/internal/log"
 	"s3-movies/internal/s3"
 	"s3-movies/internal/usecase"
+
+	"github.com/joho/godotenv"
 
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
@@ -17,20 +19,28 @@ import (
 const MaxUploadSize = 50 * 1024 * 1024
 
 func main() {
+
+	_ = godotenv.Load()
+
 	logger, err := log.NewLogger("debug")
 	if err != nil {
 		stdlog.Fatalf("cannot create logger: %v", err)
 	}
 	defer logger.Sync()
 
-	client, err := s3.GetClient(logger)
+	cfg, err := config.Load()
+	if err != nil {
+		logger.Fatal("failed to load config", zap.Error(err))
+	}
+
+	client, err := s3.GetClient(cfg, logger)
 	if err != nil {
 		logger.Error("cannot create S3 client, continuing without S3", zap.Error(err))
-		client = nil 
+		client = nil
 	}
 
 	if client != nil {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+		ctx, cancel := context.WithTimeout(context.Background(), cfg.SyncTimeout)
 		defer cancel()
 
 		if err := s3.SyncFromS3(ctx, client, "images", "downloads", logger); err != nil {

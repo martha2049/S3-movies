@@ -2,24 +2,20 @@ package s3
 
 import (
 	"fmt"
+	"s3-movies/internal/config"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
-// создание и возврат клиента MinIO/S3.
-func GetClient(logger *zap.Logger) (*minio.Client, error) {
-	// астройка Viper для работы с переменными окружения
-	viper.SetEnvPrefix("S3")   
-	viper.AutomaticEnv()        
+// создание и возврат клиента MinIO/S3 
+func GetClient(cfg *config.Config, logger *zap.Logger) (*minio.Client, error) {
 
-	// чтение переменных окружения 
-	endpoint := viper.GetString("ENDPOINT")
-	accessKey := viper.GetString("ACCESS_KEY")
-	secretKey := viper.GetString("SECRET_KEY")
-	secure := viper.GetBool("SECURE")
+	endpoint := cfg.S3Endpoint
+	accessKey := cfg.S3AccessKey
+	secretKey := cfg.S3SecretKey
+	secure := cfg.S3Secure
 
 	// проверка на пустые обязательные переменные окружения
 	if endpoint == "" || accessKey == "" || secretKey == "" {
